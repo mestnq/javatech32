@@ -12,6 +12,9 @@
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 </head>
 <body>
+<form method="post">
+    <input type="submit" name="exit" value="Exit"/>
+</form>
 <h5>${date}</h5>
 <h1>${currentPath}</h1>
 <ul>

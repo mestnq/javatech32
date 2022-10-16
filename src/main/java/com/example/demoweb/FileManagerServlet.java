@@ -27,14 +27,33 @@ public class FileManagerServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = req.getParameter("path");
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        if (req.getParameter("exit") != null) {
+            UserDB.userDB.removeUserBySession(CookieUtil.getValue(req.getCookies(), "JSESSIONID"));
+            CookieUtil.addCookie(resp, "JSESSIONID", null);
+            resp.sendRedirect("/");
+        }
+    }
 
-        if (path == null) {
-            path = System.getProperty("user.dir");
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        User user = UserDB.userDB.getUserByCookies(req.getCookies());
+        if (user == null) {
+            resp.sendRedirect("/login");
+            return;
         }
 
+        String path = req.getParameter("path");
+        if (path == null || !path.startsWith("C:\\" + user.getLogin() + "\\")) {
+            path = "C:\\" + user.getLogin() + "\\";
+        }
+
+        path = path.replaceAll("%20", " ");
+
         File currentPath = new File(path);
+        if (!currentPath.exists()) {
+            currentPath.mkdir();
+        }
 
         if (currentPath.isDirectory()) {
             viewFiles(req, currentPath);

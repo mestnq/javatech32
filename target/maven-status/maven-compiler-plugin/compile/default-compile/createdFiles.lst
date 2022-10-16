@@ -1,1 +1,6 @@
+com\example\demoweb\RegistrationServlet.class
+com\example\demoweb\User.class
 com\example\demoweb\FileManagerServlet.class
+com\example\demoweb\UserDB.class
+com\example\demoweb\LoginServlet.class
+com\example\demoweb\CookieUtil.class
