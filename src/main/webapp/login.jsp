@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Ксения
-  Date: 16.10.2022
-  Time: 21:31
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -22,7 +15,7 @@
 
     <button type="submit">Login</button>
 </form>
-<a href="/registration">
+<a href="${contextPath}/registration">
     <button>Registration</button>
 </a>
 </body>

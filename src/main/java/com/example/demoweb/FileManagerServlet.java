@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +30,11 @@ public class FileManagerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (req.getParameter("exit") != null) {
-            UserDB.userDB.removeUserBySession(CookieUtil.getValue(req.getCookies(), "JSESSIONID"));
+            try {
+                UserDB.userDB.removeUserBySession(CookieUtil.getValue(req.getCookies(), "JSESSIONID"));
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             CookieUtil.addCookie(resp, "JSESSIONID", null);
             resp.sendRedirect("/");
         }
@@ -37,7 +42,12 @@ public class FileManagerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User user = UserDB.userDB.getUserByCookies(req.getCookies());
+        User user;
+        try {
+            user = UserDB.userDB.getUserByCookies(req.getCookies());
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         if (user == null) {
             resp.sendRedirect("/login");
             return;
