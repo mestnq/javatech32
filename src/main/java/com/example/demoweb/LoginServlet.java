@@ -13,12 +13,8 @@ import java.sql.SQLException;
 public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User user = null;
-        try {
-            user = UserDB.userDB.getUserByCookies(req.getCookies());
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        User user = UserDB.userDB.getUserByCookies(req.getCookies());
+
         if (user != null) {
             resp.sendRedirect(req.getContextPath() + "/");
             return;
@@ -36,17 +32,13 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        try {
-            User user = UserDB.userDB.getUser("login", login);
-            if (user == null || !user.getPassword().equals(password)) {
-                resp.sendRedirect(req.getContextPath() + "/login");
-                return;
-            }
-
-            UserDB.userDB.addUserBySession(CookieUtil.getValue(req.getCookies(), "JSESSIONID"), user);
-            resp.sendRedirect(req.getContextPath() + "/");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        User user = UserDB.userDB.getUser(login);
+        if (user == null || !user.getPassword().equals(password)) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
         }
+        CookieUtil.addCookie(resp, "login", login);
+        CookieUtil.addCookie(resp, "password", password);
+        resp.sendRedirect(req.getContextPath() + "/");
     }
 }

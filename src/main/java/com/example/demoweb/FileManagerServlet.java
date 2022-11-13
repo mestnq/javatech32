@@ -30,11 +30,8 @@ public class FileManagerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (req.getParameter("exit") != null) {
-            try {
-                UserDB.userDB.removeUserBySession(CookieUtil.getValue(req.getCookies(), "JSESSIONID"));
-            } catch (SQLException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            CookieUtil.addCookie(resp, "login", null);
+            CookieUtil.addCookie(resp, "password", null);
             CookieUtil.addCookie(resp, "JSESSIONID", null);
             resp.sendRedirect("/");
         }
@@ -42,12 +39,8 @@ public class FileManagerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User user;
-        try {
-            user = UserDB.userDB.getUserByCookies(req.getCookies());
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        User user = UserDB.userDB.getUserByCookies(req.getCookies());
+
         if (user == null) {
             resp.sendRedirect("/login");
             return;
